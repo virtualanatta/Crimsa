@@ -79,7 +79,7 @@ Utilizamos el modo de hardware del QNAP para que el sistema gestione los discos 
 #### 1. Formateo
 Se dio formato **EXT4** por su estabilidad en Linux.
 ```bash
-sudo mkfs.ext4 /dev/sdb1  # (O el nombre del volumen RAID)
+sudo mkfs.ext4 /dev/sdb1
 
 2. Obtener UUID
 
@@ -108,7 +108,7 @@ curl -fsSL [https://tailscale.com/install.sh](https://tailscale.com/install.sh) 
 
     Vinculación: Ejecutamos sudo tailscale up y autorizamos con nuestra cuenta.
 
-    Verificación: El NUC recibe una IP privada (ej. 100.107.56.81) que solo es accesible desde mis dispositivos autorizados.
+    Verificación: El NUC recibe una IP privada (ej. 100.107.xx.xx) que solo es accesible desde mis dispositivos autorizados.
 
     Seguridad Extra: El tráfico viaja cifrado de punto a punto mediante el protocolo WireGuard.
 
