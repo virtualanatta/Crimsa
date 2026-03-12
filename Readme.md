@@ -75,7 +75,7 @@ Al conectar el gabinete QNAP TR-002, el sistema reconoce los discos físicos.
 Utilizamos el modo de hardware del QNAP (o herramientas de software como `mdadm` si fuera necesario) para que el sistema vea un único volumen lógico de **3.4 TB**.
 
 ### Paso C: Formateo y Montaje Persistente
-1. **Formateo:** Se dio formato **EXT4** por su estabilidad en Linux.
+## 1. **Formateo:** Se dio formato **EXT4** por su estabilidad en Linux.
 ```bash
 sudo mkfs.ext4 /dev/sdb1  # (O el nombre del volumen RAID)
     Obtener UUID: Fundamental para que el montaje no falle nunca.
@@ -83,7 +83,7 @@ lsblk -f
     Implementación de la línea de montaje persistente:
 UUID=tu-uuid-aqui /mnt/TFG_CRIMSA ext4 defaults,nofail 0 2
 
-2. Configuración de Red Segura (Tailscale)
+## 2. Configuración de Red Segura (Tailscale)
 
 Para evitar abrir puertos en el router y protegernos de ataques externos, usamos Tailscale.
 Pasos:
