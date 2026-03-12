@@ -47,11 +47,11 @@ Utilizamos el modo de hardware del QNAP (o herramientas de software como `mdadm`
 ### Paso C: Formateo y Montaje Persistente
 ## 1. **Formateo:** Se dio formato **EXT4** por su estabilidad en Linux.
 
-sudo mkfs.ext4 /dev/sdb1  # (O el nombre del volumen RAID)
+sudo mkfs.ext4 /dev/sdb
 ## 2. Obtener UUID: Fundamental para que el montaje no falle nunca.
 lsblk -f
 ## 3. Implementación de la línea de montaje persistente:
-UUID=tu-uuid-aqui /mnt/TFG_CRIMSA ext4 defaults,nofail 0 2
+UUID=xxxx /mnt/TFG_CRIMSA ext4 defaults,nofail 0 2
 # 2. Configuración de Red Segura (Tailscale)
 Para evitar abrir puertos en el router y protegernos de ataques externos, usamos Tailscale.
     Consulta realizada correctamente
