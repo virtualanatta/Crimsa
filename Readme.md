@@ -72,10 +72,11 @@ Al conectar el gabinete QNAP TR-002, el sistema reconoce los discos físicos.
 * **Resultado:** Identificamos `/dev/sdb` y `/dev/sdc` como los discos de 4TB.
 
 ### Paso B: Creación del RAID 1
-Utilizamos el modo de hardware del QNAP (o herramientas de software como `mdadm` si fuera necesario) para que el sistema vea un único volumen lógico de **3.4 TB**.
+Utilizamos el modo de hardware del QNAP
 
 ### Paso C: Formateo y Montaje Persistente
 ## 1. **Formateo:** Se dio formato **EXT4** por su estabilidad en Linux.
+
 ```bash
 sudo mkfs.ext4 /dev/sdb1  # (O el nombre del volumen RAID)
 
