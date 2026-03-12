@@ -79,7 +79,6 @@ Utilizamos el modo de hardware del QNAP para que el sistema gestione los discos 
 ### 1. Formateo
 Se dio formato **EXT4** por su estabilidad en Linux
 
-```bash
 sudo mkfs.ext4 /dev/sdb1
 
 ## 2. Obtener UUID
