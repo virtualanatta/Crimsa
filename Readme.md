@@ -81,21 +81,21 @@ Se dio formato **EXT4** por su estabilidad en Linux.
 ```bash
 sudo mkfs.ext4 /dev/sdb1
 
-2. Obtener UUID
+## 2. Obtener UUID
 
 Fundamental para que el montaje no falle nunca si cambian los identificadores de dispositivo.
 Bash
 
 lsblk -f
 
-3. Implementación de la línea de montaje persistente
+## 3. Implementación de la línea de montaje persistente
 
 Editamos el archivo /etc/fstab añadiendo la siguiente configuración:
 Plaintext
 
 UUID=tu-uuid-aqui /mnt/TFG_CRIMSA ext4 defaults,nofail 0 2
 
-2. Configuración de Red Segura (Tailscale)
+## 2. Configuración de Red Segura (Tailscale)
 
 Para evitar abrir puertos en el router y protegernos de ataques externos, usamos Tailscale.
 Pasos:
@@ -112,7 +112,7 @@ curl -fsSL [https://tailscale.com/install.sh](https://tailscale.com/install.sh) 
 
     Seguridad Extra: El tráfico viaja cifrado de punto a punto mediante el protocolo WireGuard.
 
-3. Configuración de Samba sobre la VPN
+## 3. Configuración de Samba sobre la VPN
 
 Samba permite que el disco duro del NUC aparezca como una unidad de red local en Windows (Unidad Z:), pero configurado para ser invisible fuera de Tailscale.
 Pasos en /etc/samba/smb.conf:
