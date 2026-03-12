@@ -76,8 +76,9 @@ Utilizamos el modo de hardware del QNAP para que el sistema gestione los discos 
 
 ### Paso C: Formateo y Montaje Persistente
 
-#### 1. Formateo
-Se dio formato **EXT4** por su estabilidad en Linux.
+### 1. Formateo
+Se dio formato **EXT4** por su estabilidad en Linux
+
 ```bash
 sudo mkfs.ext4 /dev/sdb1
 
