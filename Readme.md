@@ -29,3 +29,100 @@ Componentes de seguridad:
     1. Usuarios SSH activos
     2. Sesiones de Samba abiertas
     3. Porcentaje de uso de los 3.4 TB
+
+
+# Guía de Configuración: Del Hardware a la Nube Privada
+
+# 1. Configuración de Discos y Creación del RAID
+Para asegurar que los datos del TFG no se pierdan si un disco falla, hemos configurado un sistema de espejo (RAID 1).
+
+### Paso A: Identificación de Hardware
+Al conectar el gabinete QNAP TR-002, el sistema reconoce los discos físicos.
+* **Comando:** `lsblk`
+* **Resultado:** Identificamos `/dev/sdb` y `/dev/sdc` como los discos de 4TB.
+
+### Paso B: Creación del RAID 1
+Utilizamos el modo de hardware del QNAP (o herramientas de software como `mdadm` si fuera necesario) para que el sistema vea un único volumen lógico de **3.4 TB**.
+
+### Paso C: Formateo y Montaje Persistente
+## 1. **Formateo:** Se dio formato **EXT4** por su estabilidad en Linux.
+
+sudo mkfs.ext4 /dev/sdb1  # (O el nombre del volumen RAID)
+## 2. Obtener UUID: Fundamental para que el montaje no falle nunca.
+lsblk -f
+## 3. Implementación de la línea de montaje persistente:
+UUID=tu-uuid-aqui /mnt/TFG_CRIMSA ext4 defaults,nofail 0 2
+# 2. Configuración de Red Segura (Tailscale)
+Para evitar abrir puertos en el router y protegernos de ataques externos, usamos Tailscale.
+    Consulta realizada correctamente
+
+Gemini ha dicho
+
+Aquí tienes el contenido en texto plano, respetando exactamente tu estructura y estilo para que solo tengas que copiarlo y pegarlo en tu archivo de GitHub (.md).
+Markdown
+
+# Guía de Configuración: Del Hardware a la Nube Privada
+
+## 1. Configuración de Discos y Creación del RAID
+Para asegurar que los datos del TFG no se pierdan si un disco falla, hemos configurado un sistema de espejo (RAID 1).
+
+### Paso A: Identificación de Hardware
+Al conectar el gabinete QNAP TR-002, el sistema reconoce los discos físicos.
+* **Comando:** `lsblk`
+* **Resultado:** Identificamos `/dev/sdb` y `/dev/sdc` como los discos de 4TB.
+
+### Paso B: Creación del RAID 1
+Utilizamos el modo de hardware del QNAP (o herramientas de software como `mdadm` si fuera necesario) para que el sistema vea un único volumen lógico de **3.4 TB**.
+
+### Paso C: Formateo y Montaje Persistente
+1. **Formateo:** Se dio formato **EXT4** por su estabilidad en Linux.
+```bash
+sudo mkfs.ext4 /dev/sdb1  # (O el nombre del volumen RAID)
+    Obtener UUID: Fundamental para que el montaje no falle nunca.
+lsblk -f
+    Implementación de la línea de montaje persistente:
+UUID=tu-uuid-aqui /mnt/TFG_CRIMSA ext4 defaults,nofail 0 2
+
+2. Configuración de Red Segura (Tailscale)
+
+Para evitar abrir puertos en el router y protegernos de ataques externos, usamos Tailscale.
+Pasos:
+    Instalación:   
+```bash
+curl -fsSL [https://tailscale.com/install.sh](https://tailscale.com/install.sh) | sh
+    ## Vinculación: Ejecutamos sudo tailscale up y autorizamos con nuestra cuenta.
+
+    ## Verificación: El NUC recibe una IP privada (ej. 100.107.xx.xx) que solo es accesible desde mis dispositivos autorizados.
+
+    ## Seguridad Extra: El tráfico viaja cifrado de punto a punto mediante el protocolo WireGuard.
+# 3. Configuración de Samba sobre la VPN
+Samba permite que el disco duro del NUC aparezca como una unidad de red local en Windows (Unidad Z:), pero configurado para ser invisible fuera de Tailscale.
+Pasos en /etc/samba/smb.conf:
+
+    Restringir interfaces: Obligamos a Samba a escuchar solo en Tailscale
+Ini, TOML
+
+interfaces = lo tailscale0
+bind interfaces only = yes
+Seguridad de usuario: Creamos el usuario y la contraseña de red.
+
+Bash
+
+sudo smbpasswd -a gerard
+Ini, TOML
+
+[TFG_CRIMSA]
+   path = /mnt/TFG_CRIMSA
+   valid users = gerard
+   read only = no
+   smb encrypt = required
+Auditoría de Seguridad Automatizada
+
+Para tener el control total, implementamos un script que nos avisa de cada movimiento.
+    Frecuencia: Cada vez que alguien entra por SSH (/etc/profile) y cada hora (Crontab).
+    Datos registrados:
+        Usuarios conectados por consola.
+        Conexiones activas a los archivos (Samba).
+        Espacio disponible en el RAID.
+Ubicación del Log:
+El reporte se genera automáticamente en: /mnt/TFG_CRIMSA/SISTEMA/LOGS/historial_conexiones.log
