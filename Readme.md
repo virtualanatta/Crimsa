@@ -78,18 +78,26 @@ Utilizamos el modo de hardware del QNAP (o herramientas de software como `mdadm`
 ## 1. **Formateo:** Se dio formato **EXT4** por su estabilidad en Linux.
 ```bash
 sudo mkfs.ext4 /dev/sdb1  # (O el nombre del volumen RAID)
+
     Obtener UUID: Fundamental para que el montaje no falle nunca.
+
 lsblk -f
+
     Implementación de la línea de montaje persistente:
+
 UUID=tu-uuid-aqui /mnt/TFG_CRIMSA ext4 defaults,nofail 0 2
 
 ## 2. Configuración de Red Segura (Tailscale)
 
 Para evitar abrir puertos en el router y protegernos de ataques externos, usamos Tailscale.
 Pasos:
-    Instalación:   
+
+    Instalación:
+
 ```bash
+
 curl -fsSL [https://tailscale.com/install.sh](https://tailscale.com/install.sh) | sh
+
     ## Vinculación: Ejecutamos sudo tailscale up y autorizamos con nuestra cuenta.
 
     ## Verificación: El NUC recibe una IP privada (ej. 100.107.xx.xx) que solo es accesible desde mis dispositivos autorizados.
