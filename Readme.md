@@ -123,3 +123,70 @@ Ini, TOML
 
 interfaces = lo tailscale0
 bind interfaces only = yes
+
+# 2. Seguridad y monitoreo
+Decidimos crear un sistema de monitoreo en bash script para registrar cuando un dispositivo entra al servidor, guardando tanto la IP 
+## 3.4. Sistema de Alerta y Auditoría en Tiempo Real (Bot de Telegram)
+
+Para reforzar la seguridad, especialmente al trabajar desde equipos públicos en el centro educativo, se ha implementado un sistema de notificación reactiva. Cada vez que se establece una conexión SSH, el servidor ejecuta un script que informa al administrador a través de un Bot de Telegram y registra la actividad en un log persistent
+
+### A. Configuración del Bot de Telegram (Crimsa_Sentinel_Bot)
+Se utilizó la API de Telegram para crear un agente de monitorización. Este proceso permite recibir alertas instantáneas en dispositivos móviles sin necesidad de consultar manualmente los logs del sistema
+
+1. **Creación:** Mediante `@BotFather`, se generó un token API único para la autenticación del servidor.
+2. **Identificación:** Se obtuvo el `Chat ID` del administrador para asegurar que las alertas sean privadas y dirigidas
+
+### B. Script de Automatización de Auditoría
+El script se ubica en `/home/gerard/scripts/notificar_ssh.sh` y ha sido diseñado para ser ligero y no bloquear el inicio de sesión del usuario
+
+#!/bin/bash
+
+## Configuración de credenciales y rutas
+TOKEN="xxxxxxxxxxxxxxxxxxx"
+ID_CHAT="xxxxxxxxxx"
+LOG_FILE="/mnt/TFG_CRIMSA/SISTEMA/LOGS/historial_conexiones.log"
+
+## Recolección de variables de entorno y sistema
+AHORA=$(date "+%Y-%m-%d %H:%M:%S")
+USUARIO=$(whoami)
+IP_REMOTA=$(echo $SSH_CONNECTION | awk '{print $1}')
+[ -z "$IP_REMOTA" ] && IP_REMOTA="Local"
+
+## Cálculo de estado del almacenamiento (DAS QNAP)
+ESPACIO=$(df -h /mnt/TFG_CRIMSA | awk 'NR==2 {print $5}')
+
+## 1. Registro en Log persistente (Una línea por acceso)
+printf "%-20s | %-10s | %-15s | DAS: %-5s\n" "$AHORA" "$USUARIO" "$IP_REMOTA" "$ESPACIO" >> $LOG_FILE
+
+## 2. Envío de notificación push vía Telegram
+MENSAJE=" *Crimsa Sentinel: Acceso Detectado* 
+------------------------------------
+ *Usuario:* $USUARIO
+ *Desde IP:* $IP_REMOTA
+ *Storage DAS:* $ESPACIO
+ *Fecha:* $AHORA"
+
+curl -s -X POST "[https://api.telegram.org/bot$TOKEN/sendMessage](https://api.telegram.org/bot$TOKEN/sendMessage)" \
+     -d "chat_id=$ID_CHAT" \
+     -d "text=$MENSAJE" \
+     -d "parse_mode=Markdown" > /dev/null
+
+### C. Integración en el Sistema
+
+Para que la auditoría sea ineludible, se vinculó la ejecución del script al entorno del usuario:
+
+    Archivo de configuración: ~/.bashrc (o /etc/profile para todos los usuarios).
+
+    Comando de activación: Se añadió la línea bash /home/gerard/scripts/notificar_ssh.sh & al final del fichero.
+
+    Seguridad de Logs: Se aplicó el atributo de inmutabilidad chattr +a al archivo de log en el DAS, permitiendo únicamente añadir información y prohibiendo el borrado de registros previos.
+
+### D. Verificación de Auditoría
+
+El administrador puede consultar el historial de accesos de forma rápida mediante el alias verlogs, que muestra el contenido formateado del archivo alojado en el QNAP:
+Bash
+
+# Ejemplo de salida del log de auditoría
+FECHA Y HORA         | USUARIO    | IP ORIGEN       | STORAGE
+2026-03-16 16:45:02  | gerard     | 100.107.56.81   | DAS: 45%
+2026-03-16 17:10:15  | david      | 100.107.56.81   | DAS: 45%
