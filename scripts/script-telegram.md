@@ -1,5 +1,20 @@
 # Script de Notificación de Acceso y Estado vía Telegram
 
+## Código base
+
+```bash
+TOKEN="TU_TOKEN"
+ID_CHAT="TU_CHAT_ID"
+LOG_FILE="/ruta/log.log"
+
+printf "Registro de acceso" >> $LOG_FILE
+
+curl -s -X POST https://api.telegram.org/bot$TOKEN/sendMessage \
+-d chat_id=$ID_CHAT \
+-d text="Mensaje" \
+-d parse_mode="Markdown" > /dev/null
+```
+
 ## Explicación
 
 Este script integra una capa de seguridad activa al sistema, enviando una notificación instantánea a un bot de Telegram cada vez que se detecta un acceso o ejecución, informando sobre el usuario y el estado del almacenamiento.
@@ -28,19 +43,3 @@ Es la funcionalidad principal del script para la monitorización en tiempo real:
 - **Envío con `curl`**: realiza una petición `POST` a la API de Telegram para enviar el mensaje de forma silenciosa (`-s`).
 - **Optimización**: el resultado de la petición se redirige a `/dev/null` para no generar salidas innecesarias en la terminal del usuario.
 
-## Código base
-
-```bash
-TOKEN="TU_TOKEN"
-ID_CHAT="TU_CHAT_ID"
-LOG_FILE="/ruta/log.log"
-
-printf "Registro de acceso" >> $LOG_FILE
-
-curl -s -X POST https://api.telegram.org/bot$TOKEN/sendMessage \
--d chat_id=$ID_CHAT \
--d text="Mensaje" \
--d parse_mode="Markdown" > /dev/null
-```
-
-> Nota: Si algún día quieres editarlos, tendrás que quitar el atributo primero con `sudo chattr -i` (para los scripts) o `sudo chattr -a` (para el log).
