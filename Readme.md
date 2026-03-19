@@ -190,3 +190,114 @@ Bash
 FECHA Y HORA         | USUARIO    | IP ORIGEN       | STORAGE
 2026-03-16 16:45:02  | gerard     | 100.107.56.81   | DAS: 45%
 2026-03-16 17:10:15  | david      | 100.107.56.81   | DAS: 45%
+# 4. Orquestación y Microservicios (Docker Full-Stack)
+
+Para el Proyecto CRISMA, se ha pasado de un servidor estático a una arquitectura de contenedores aislados. Esto garantiza que el software sea independiente del hardware del NUC.
+
+## A. Definición de Servicios (docker-compose.yml)
+
+Se ha configurado un orquestador que gestiona tres contenedores críticos:
+
+### crisma_db (PostgreSQL 15)
+Base de datos relacional. Los datos se almacenan en el RAID 1 del QNAP (/mnt/TFG_CRIMSA/database/data) para evitar pérdidas en caso de fallo del contenedor.
+
+### crisma_back (Node.js)
+Motor de la API. Se comunica internamente con la DB y expone los servicios al exterior.
+
+### crisma_front (React + Vite)
+Interfaz de usuario de alta velocidad.
+
+## B. Gestión de Red y Resolución de Conflictos (Networking)
+
+Un punto clave fue la coexistencia con servicios previos (Grafana, Nginx). Se realizaron los siguientes ajustes de puertos para evitar colisiones:
+
+### Frontend
+Mapeado al puerto 8081 (Host) para saltar el proxy inverso de Nginx que bloqueaba el puerto 80.
+
+### Backend
+Mapeado al puerto 3005 (Host) para no interferir con el puerto 3000 de Grafana.
+
+### Firewall (UFW)
+Se habilitaron reglas específicas en el NUC para permitir tráfico entrante en estos puertos a través de la interfaz tailscale0.
+
+# 5. Capa de Datos: Base de Datos "Danet"
+
+No solo creamos una base de datos, sino que automatizamos su estructura y contenido inicial.
+
+## A. Esquema de Usuarios y Roles (RBAC)
+
+Se diseñó un modelo de Control de Acceso Basado en Roles:
+
+### Tabla roles
+Define los permisos (ADMIN, PROFESOR, ALUMNO).
+
+### Tabla usuarios
+Vinculada a roles mediante una Foreign Key, garantizando integridad referencial.
+
+## B. Inyección Masiva (Data Seeding)
+
+Para pruebas de estrés y visualización, se creó el script seed_data.sql que inyecta automáticamente:
+
+### Datos generados
+- 1 Administrador principal  
+- 9 Profesores  
+- 40 Alumnos con datos aleatorios pero estructurados  
+
+# 6. Desarrollo de la API y Seguridad (El "Cerebro")
+
+El backend se reconstruyó para ser una API REST segura.
+
+## A. El "Puente" de Datos (db.js)
+
+Se implementó un Connection Pool. Esto significa que el backend mantiene varias conexiones abiertas con PostgreSQL para responder instantáneamente, en lugar de abrir y cerrar una cada vez que alguien hace login.
+
+## B. Seguridad Blindada (Bcrypt & JWT)
+
+Para cumplir con los estándares de "Privacidad por Diseño", se aplicaron dos tecnologías:
+
+### Cifrado Bcrypt
+Se creó el script update_pass.js para transformar las contraseñas planas en hashes de 60 caracteres. El servidor nunca conoce tu contraseña real, solo compara firmas matemáticas.
+
+### Tokens JWT
+Al entrar, el servidor emite un JSON Web Token. Este token viaja en las cabeceras de cada petición, permitiendo que el usuario navegue de forma segura sin reenviar sus credenciales constantemente.
+
+# 7. Frontend Moderno (React + Vite)
+
+El frontend se configuró para ser una aplicación ligera y rápida (SPA).
+
+## A. Resolución de Errores Críticos (Troubleshooting)
+
+### Entry Point Fix
+Se configuró manualmente el index.html y main.jsx para que Vite pudiera localizar el punto de inicio de React dentro del contenedor.
+
+### Vite Config
+Se creó un vite.config.js específico para que el servidor escuchara en la dirección 0.0.0.0, permitiendo el acceso desde fuera del contenedor.
+
+## B. Interfaz de Login Reactiva
+
+Se desarrolló un componente de login que utiliza Axios para comunicarse con el puerto 3005 del backend. El sistema ofrece feedback en tiempo real:
+
+### Funcionalidades
+- Muestra el rol del usuario al entrar exitosamente  
+- Detecta errores de conexión o credenciales inválidas  
+
+# 8. Mantenimiento y Comandos Útiles
+
+Para gestionar este entorno desde la terminal del NUC, se utilizan estos flujos de trabajo:
+
+## Comandos
+
+### Reiniciar todo el sistema
+sudo docker compose down && sudo docker compose up -d
+
+### Ver logs del Backend
+sudo docker logs -f crisma_back
+
+### Ver logs del Frontend
+sudo docker logs -f crisma_front
+
+### Entrar a la DB por consola
+sudo docker exec -it crisma_db psql -U Crisma -d Danet
+
+### Actualizar Contraseñas
+sudo docker exec -it crisma_back node update_pass.js
