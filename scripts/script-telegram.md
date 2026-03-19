@@ -2,18 +2,8 @@
 
 ## Código base
 
-```bash
-TOKEN="TU_TOKEN"
-ID_CHAT="TU_CHAT_ID"
-LOG_FILE="/ruta/log.log"
+<img width="621" height="442" alt="image" src="https://github.com/user-attachments/assets/6bb30869-fdb2-47a6-87da-39390fb5c2c9" />
 
-printf "Registro de acceso" >> $LOG_FILE
-
-curl -s -X POST https://api.telegram.org/bot$TOKEN/sendMessage \
--d chat_id=$ID_CHAT \
--d text="Mensaje" \
--d parse_mode="Markdown" > /dev/null
-```
 
 ## Explicación
 
