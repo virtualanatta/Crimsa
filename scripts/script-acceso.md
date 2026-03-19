@@ -5,7 +5,7 @@
 ```bash
 #!/bin/bash
 
-LOG_FILE="/mnt/TFG_CRIMSA/SISTEMA/LOGS/historial_conexiones.log"
+LOG_FILE="~/historial_conexiones.log"
 
 # 1. Recoger variables en una sola línea
 AHORA=$(date "+%Y-%m-%d %H:%M:%S")
