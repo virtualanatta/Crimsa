@@ -2,17 +2,8 @@
 
 ## Código base
 
-```bash
-mkdir -p "$DESTINO"
+<img width="763" height="314" alt="image" src="https://github.com/user-attachments/assets/ff38d2a5-e60c-43b5-b0fa-c144b3416670" />
 
-rsync -az "$ORIGEN" "$DESTINO"
-
-if [ $? -eq 0 ]; then
-    echo "COPIA CORRECTA" >> $LOG
-else
-    echo "ERROR EN LA COPIA" >> $LOG
-fi
-```
 
 ## Explicación
 
