@@ -2,24 +2,8 @@
 
 ## Código
 
-```bash
-#!/bin/bash
+<img width="909" height="277" alt="image" src="https://github.com/user-attachments/assets/c75c7601-20c6-40c7-9bd6-563dd5617368" />
 
-LOG_FILE="~/historial_conexiones.log"
-
-# 1. Recoger variables en una sola línea
-AHORA=$(date "+%Y-%m-%d %H:%M:%S")
-USUARIO=$(whoami)
-IP_REMOTA=$(echo $SSH_CONNECTION | awk '{print $1}')
-[ -z "$IP_REMOTA" ] && IP_REMOTA="Local"
-
-# 2. Obtener el espacio libre (solo el porcentaje)
-ESPACIO=$(df -h /mnt/TFG_CRIMSA | awk 'NR==2 {print $5}')
-
-# 3. GUARDAR TODO EN UNA SOLA LÍNEA (Append >>)
-# El formato es: FECHA | USUARIO | IP | ESPACIO DAS
-printf "%-20s | %-10s | %-15s | DAS: %-5s\n" "$AHORA" "$USUARIO" "$IP_REMOTA" "$ESPACIO" >> $LOG_FILE
-```
 
 ## Explicación
 
