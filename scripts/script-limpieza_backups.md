@@ -1,5 +1,18 @@
 # Script de Mantenimiento y Rotación de Backups
 
+## Código base
+
+```bash
+RUTA_BACKUPS="/ruta/backups"
+LOG_LIMPIEZA="/ruta/log.log"
+
+echo "Inicio: $(date)" >> $LOG_LIMPIEZA
+
+find $RUTA_BACKUPS -maxdepth 1 -type d -name "semanal_*" -mtime +30 -exec rm -rf {} \;
+
+>> $LOG_LIMPIEZA 2>&1
+```
+
 ## Explicación
 
 Este script de mantenimiento automatiza la eliminación de backups semanales con más de 30 días de antigüedad, optimizando el almacenamiento en el DAS.
@@ -25,15 +38,3 @@ Busca en `$RUTA_BACKUPS` sin descender en subdirectorios (`-maxdepth 1`).
 
 - **Registro**: redirige la salida y errores (`2>&1`) al log, incluyendo la marca de tiempo de inicio y fin.
 
-## Código base
-
-```bash
-RUTA_BACKUPS="/ruta/backups"
-LOG_LIMPIEZA="/ruta/log.log"
-
-echo "Inicio: $(date)" >> $LOG_LIMPIEZA
-
-find $RUTA_BACKUPS -maxdepth 1 -type d -name "semanal_*" -mtime +30 -exec rm -rf {} \;
-
->> $LOG_LIMPIEZA 2>&1
-```
