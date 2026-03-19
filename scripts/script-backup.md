@@ -1,5 +1,19 @@
 # Script de Backup con rsync
 
+## Código base
+
+```bash
+mkdir -p "$DESTINO"
+
+rsync -az "$ORIGEN" "$DESTINO"
+
+if [ $? -eq 0 ]; then
+    echo "COPIA CORRECTA" >> $LOG
+else
+    echo "ERROR EN LA COPIA" >> $LOG
+fi
+```
+
 ## Explicación
 
 El script de backup en Bash utiliza `rsync` para realizar una copia.
@@ -37,17 +51,3 @@ Se omite el modo verbose (`-v`) para facilitar la automatización.
 
 - **0 (éxito)**: registra `"COPIA CORRECTA"` en el log.
 - **Otro valor (fallo)**: registra `"ERROR EN LA COPIA"` para revisión.
-
-## Código base
-
-```bash
-mkdir -p "$DESTINO"
-
-rsync -az "$ORIGEN" "$DESTINO"
-
-if [ $? -eq 0 ]; then
-    echo "COPIA CORRECTA" >> $LOG
-else
-    echo "ERROR EN LA COPIA" >> $LOG
-fi
-```
