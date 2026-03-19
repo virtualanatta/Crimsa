@@ -2,16 +2,8 @@
 
 ## Código base
 
-```bash
-RUTA_BACKUPS="/ruta/backups"
-LOG_LIMPIEZA="/ruta/log.log"
+<img width="930" height="198" alt="image" src="https://github.com/user-attachments/assets/3bdee20c-72ff-4214-82be-a5f4785eac5c" />
 
-echo "Inicio: $(date)" >> $LOG_LIMPIEZA
-
-find $RUTA_BACKUPS -maxdepth 1 -type d -name "semanal_*" -mtime +30 -exec rm -rf {} \;
-
->> $LOG_LIMPIEZA 2>&1
-```
 
 ## Explicación
 
